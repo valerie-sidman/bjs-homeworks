@@ -31,20 +31,17 @@ class AlarmClock {
     return `${hours}:${minutes}`;
   }
   start() {
-    function checkClock (alarm) {
+    const checkClock = (alarm) => {
       if (this.getCurrentFormattedTime() === alarm.time) {
         alarm.callback();
       }
     }
-    if (this.timerId != null) {
-      function sortingAlarm() {
-        this.alarmCollection.forEach((element) => checkClock(element));
-      }
-      this.timerId = setInterval(sortingAlarm, 1000);
+    if (this.timerId === null) {
+      this.timerId = setInterval(() => this.alarmCollection.forEach((element) => checkClock(element)), 1000);
     }
   }
   stop() {
-    if (this.timerId === null) {
+    if (this.timerId != null) {
       clearInterval(this.timerId);
       this.timerId = null;
     }
@@ -59,3 +56,18 @@ class AlarmClock {
     this.alarmCollection = [];
   }
 }
+
+function testCase() {
+  const newAlarm = new AlarmClock();
+  newAlarm.addClock('09:56', () => console.log('Пора вставать'), 1);
+  newAlarm.addClock('09:57', () => {console.log('Давай, вставай уже!'); newAlarm.removeClock(2)}, 2);
+  newAlarm.addClock('09:58', () => {
+    console.log('Можешь уже не вставать');
+    newAlarm.clearAlarms();
+    console.log(newAlarm.alarmCollection);
+  }, 3);
+  newAlarm.printAlarms();
+  newAlarm.start();
+}
+
+testCase();
